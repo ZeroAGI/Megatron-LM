@@ -131,7 +131,7 @@ def convert_to_hf(model_path, input_base_path, model_size, tokenizer_path):
             tokenizer = tokenizer_class(tokenizer_path)
             if "llama2" in model_size:
                 tokenizer.save_pretrained(model_path)
-            vocab_size = tokenizer.vocab_size if tokenizer_path is not None else 32000
+            vocab_size = tokenizer.n_words if tokenizer_path is not None else 32000
         elif "mistral" in model_size:
             tokenizer = tokenizer_class.from_file(tokenizer_path)
             vocab_size = 32768
@@ -460,7 +460,8 @@ def _load_checkpoint(queue, args):
                 '--no-save-rng',
                 '--mock-data', # To pass the "blend data checks" in arguments.py
                 '--no-initialization',
-                '--load', args.load_dir
+                '--load', args.load_dir,
+                '--make-vocab-size-divisible-by', '49825',
                 ]
 
     margs = parse_args()
@@ -547,7 +548,7 @@ def _load_checkpoint(queue, args):
     md.swiglu = margs.swiglu
     md.previous_tensor_parallel_size = margs.tensor_model_parallel_size
     md.previous_pipeline_parallel_size = margs.pipeline_model_parallel_size
-    md.make_vocab_size_divisible_by = None
+    md.make_vocab_size_divisible_by = 49825 # None
     md.checkpoint_args = margs
     md.consumed_train_samples = 0
     md.consumed_valid_samples = 0
@@ -561,7 +562,7 @@ def _load_checkpoint(queue, args):
         except ImportError:
             raise AssertionError("Module 'llama' is required but not installed.")
         tokenizer = Llama3Tokenizer(margs.tokenizer_model)
-        md.true_vocab_size = tokenizer.vocab_size
+        md.true_vocab_size = tokenizer.n_words # .vocab_size
     else:
         md.true_vocab_size = None
 
