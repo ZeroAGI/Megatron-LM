@@ -1,0 +1,16 @@
+# nginx.yaml
+apiVersion: v1
+kind: Pod
+metadata:
+  name: app-pod
+spec:
+  ports:
+    - name: ssh-port
+      port: 32321
+      targetPort: 32321
+  containers:
+    - name: app-container
+      image: zeroagi/train-image:latest
+      ports:
+        - containerPort: 32321
+

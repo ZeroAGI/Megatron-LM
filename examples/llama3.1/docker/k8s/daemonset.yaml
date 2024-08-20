@@ -1,0 +1,46 @@
+# nginx.yaml
+apiVersion: apps/v1
+kind: DaemonSet
+metadata:
+  name: app-daemonset
+spec:
+  selector:
+    matchLabels:
+      app: app-pod
+  template:
+    metadata:
+      labels:
+        app: app-pod
+    spec:
+      hostNetwork: true
+      tolerations:
+      # 这些容忍度设置是为了让该守护进程集在控制平面节点上运行
+      # 如果你不希望自己的控制平面节点运行 Pod，可以删除它们
+      - key: node-role.kubernetes.io/control-plane
+        operator: Exists
+        effect: NoSchedule
+      - key: node-role.kubernetes.io/master
+        operator: Exists
+        effect: NoSchedule
+      containers:
+        - name: app-container
+          image: zeroagi/train-image:240820
+          ports:
+            - containerPort: 32321
+          volumeMounts:
+            - mountPath: /mnt_share
+              name: nfs-volume
+            - name: shared-memory-volume
+              mountPath: /dev/shm
+            - name: workspace-volume
+              mountPath: /mnt2/project/rank-worker
+      volumes:
+        - name: nfs-volume
+          hostPath:
+            path: /mnt_share
+        - name: shared-memory-volume
+          emptyDir:
+            medium: Memory
+        - name: workspace-volume
+          hostPath:
+             path: /mnt2/project/rank-worker

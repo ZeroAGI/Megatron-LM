@@ -1,0 +1,37 @@
+# nginx.yaml
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: app-deployment
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: app-pod
+  template:
+    metadata:
+      labels:
+        app: app-pod
+    spec:
+      containers:
+        - name: app-container
+          image: zeroagi/train-image:latest
+          ports:
+            - containerPort: 32321
+          volumeMounts:
+            - mountPath: /mnt_share
+              name: nfs-volume
+            - name: shared-memory-volume
+              mountPath: /dev/shm
+            - name: workspace-volume
+              mountPath: /mnt2/project/rank-worker
+      volumes:
+        - name: nfs-volume
+          hostPath:
+            path: /mnt_share
+        - name: shared-memory-volume
+          emptyDir:
+            medium: Memory
+        - name: workspace-volume
+          hostPath:
+             path: /mnt2/project/rank-worker
