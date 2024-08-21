@@ -461,7 +461,6 @@ def _load_checkpoint(queue, args):
                 '--mock-data', # To pass the "blend data checks" in arguments.py
                 '--no-initialization',
                 '--load', args.load_dir,
-                '--make-vocab-size-divisible-by', '49825',
                 ]
 
     margs = parse_args()
@@ -548,7 +547,7 @@ def _load_checkpoint(queue, args):
     md.swiglu = margs.swiglu
     md.previous_tensor_parallel_size = margs.tensor_model_parallel_size
     md.previous_pipeline_parallel_size = margs.pipeline_model_parallel_size
-    md.make_vocab_size_divisible_by = 49825 # None
+    md.make_vocab_size_divisible_by = None
     md.checkpoint_args = margs
     md.consumed_train_samples = 0
     md.consumed_valid_samples = 0

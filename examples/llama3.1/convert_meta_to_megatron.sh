@@ -22,7 +22,6 @@ python tools/checkpoint/convert.py \
 	   --tokenizer-model ${TOKENIZER_MODEL} \
 	   --target-tensor-parallel-size ${TP} \
 	   --target-pipeline-parallel-size ${PP} \
-	   --make-vocab-size-divisible-by 49825 \
 	   --bf16
            #--true-vocab-size 398596
 	   #--make-vocab-size-divisible-by 49825 

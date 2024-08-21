@@ -392,7 +392,6 @@ def save_checkpoint(queue, args):
                 '--save', args.save_dir
                 ]
 
-    md.make_vocab_size_divisible_by = 49825
     if md.make_vocab_size_divisible_by is not None:
         sys.argv.extend(['--make-vocab-size-divisible-by', str(md.make_vocab_size_divisible_by)])
     if md.params_dtype == torch.float16:
